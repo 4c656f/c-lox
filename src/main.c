@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/_types/_size_t.h>
 
 #include "chunk.h"
 #include "common.h"
