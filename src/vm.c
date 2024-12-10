@@ -1,5 +1,6 @@
 #include "vm.h"
 #include "chunk.h"
+#include "compiler.h"
 #include "debug.h"
 #include "value.h"
 #include <stdint.h>
@@ -83,8 +84,7 @@ Value pop() {
   return *vm.stackTop;
 }
 
-InterpritationResult interpret(Chunk *chunk) {
-  vm.chunk = chunk;
-  vm.ip = chunk->code;
-  return run();
+InterpritationResult interpret(char *source) {
+  compile(source);
+  return INTERPRET_OK;
 }
