@@ -64,37 +64,16 @@ static void runFile(const char *path) {
 }
 
 int main(int argc, char *argv[]) {
+  initVm();
   if (argc == 1) {
     repl();
   } else if (argc == 2) {
-
+    runFile(argv[1]);
   } else {
+    fprintf(stderr, "Usage: clox [path]\n");
+    exit(64);
   }
-  Chunk chunk;
-  initVm();
-  initChunk(&chunk);
 
-  // lhs
-  writeChunk(&chunk, OP_CONSTANT, 123);
-  writeChunk(&chunk, addConstant(&chunk, 2), 123);
-
-  // rhs
-  writeChunk(&chunk, OP_CONSTANT, 123);
-  writeChunk(&chunk, addConstant(&chunk, 2), 123);
-
-  writeChunk(&chunk, OP_ADD, 123);
-
-  // rhs
-  writeChunk(&chunk, OP_CONSTANT, 123);
-  writeChunk(&chunk, addConstant(&chunk, 2), 123);
-
-  writeChunk(&chunk, OP_ADD, 123);
-
-  writeChunk(&chunk, OP_RETURN, 123);
-  disassembleChunk(&chunk, "test_chunk");
-  interpret(&chunk);
-
-  freeChunk(&chunk);
   freeVm();
   return 0;
 }

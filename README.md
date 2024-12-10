@@ -1,50 +1,41 @@
-[![progress-banner](https://backend.codecrafters.io/progress/interpreter/49b619d7-d51a-4f35-80db-370cc053986a)](https://app.codecrafters.io/users/codecrafters-bot?r=2qF)
+# C-Lox Interpreter 🚀
 
-This is a starting point for C solutions to the
-["Build your own Interpreter" Challenge](https://app.codecrafters.io/courses/interpreter/overview).
+An implementation of the Lox programming language Interpreter written in C. This interpreter is based on the book ["Crafting Interpreters"](https://craftinginterpreters.com/) by Robert Nystrom and tested via [Codecrafters](https://app.codecrafters.io/courses/interpreter).
 
-This challenge follows the book
-[Crafting Interpreters](https://craftinginterpreters.com/) by Robert Nystrom.
+## About Lox 📖
 
-In this challenge you'll build an interpreter for
-[Lox](https://craftinginterpreters.com/the-lox-language.html), a simple
-scripting language. Along the way, you'll learn about tokenization, ASTs,
-tree-walk interpreters and more.
+Lox is a dynamically-typed scripting language that supports object-oriented programming with classes and inheritance. This implementation follows the bytecode interpreter pattern.
 
-Before starting this challenge, make sure you've read the "Welcome" part of the
-book that contains these chapters:
+## Features ✨
 
-- [Introduction](https://craftinginterpreters.com/introduction.html) (chapter 1)
-- [A Map of the Territory](https://craftinginterpreters.com/a-map-of-the-territory.html)
-  (chapter 2)
-- [The Lox Language](https://craftinginterpreters.com/the-lox-language.html)
-  (chapter 3)
+Here's what's currently implemented in this interpreter:
 
-These chapters don't involve writing code, so they won't be covered in this
-challenge. This challenge will start from chapter 4,
-[Scanning](https://craftinginterpreters.com/scanning.html).
+| Feature | Status |
+|---------|---------|
+| Scanner | 🚧 |
+| Basic Arithmetic | 🚧 |
+| Variables | 🚧 |
+| Control Flow (if/else) | 🚧 |
+| Loops (while, for) | 🚧 |
+| Functions | 🚧 |
+| Closures | 🚧 |
+| Classes | 🚧 |
+| Inheritance | 🚧 |
+| Standard Library | 🚧 |
+| Error Handling | 🚧 |
 
-**Note**: If you're viewing this repo on GitHub, head over to
-[codecrafters.io](https://codecrafters.io) to try the challenge.
+## Contributing 🤝
 
-# Passing the first stage
+I will be glad to receive any of your questions/suggestions/contributions to this project! Feel free to open a PR or contact me via:
 
-The entry point for your program is in `src/main.c`. Study and uncomment the
-relevant code, and push your changes to pass the first stage:
+[Twitter](https://x.com/4c656f)
 
-```sh
-git commit -am "pass 1st stage" # any msg
-git push origin master
-```
+[Email](mailto:tarabrinleonid@gmail.com)
 
-Time to move on to the next stage!
+[Telegram](https://t.me/c656f)
 
-# Stage 2 & beyond
+---
 
-Note: This section is for stages 2 and beyond.
+For more information about the Lox language, visit [Crafting Interpreters](https://craftinginterpreters.com/).
 
-1. Ensure you have `gcc` installed locally
-2. Run `./your_program.sh` to run your program, which is implemented in
-   `src/main.c`.
-3. Commit your changes and run `git push origin master` to submit your solution
-   to CodeCrafters. Test output will be streamed to your terminal.
+*Note: This implementation is for educational purposes and may not be suitable for production use.*
