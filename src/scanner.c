@@ -354,13 +354,18 @@ void printToken(Token token) {
     break;
   }
   case TOKEN_STRING: {
-    printf("STRING %.*s %.*s\n", token.length, token.start, token.length-2,
-           token.start+1);
+    printf("STRING %.*s %.*s\n", token.length, token.start, token.length - 2,
+           token.start + 1);
     break;
   }
   case TOKEN_NUMBER: {
-    printf("NUMBER %.*s %f\n", token.length, token.start,
-           strtod(token.start, NULL));
+    double value = strtod(token.start, NULL);
+    if (value == (int)value) {
+      printf("NUMBER %.*s %g%s\n", token.length, token.start, value, ".0");
+    } else {
+
+      printf("NUMBER %.*s %g\n", token.length, token.start, value);
+    }
     break;
   }
 
