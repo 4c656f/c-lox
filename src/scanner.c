@@ -285,7 +285,6 @@ void printToken(Token token) {
     printf("LEFT_PAREN ( null\n");
     break;
   case TOKEN_RIGHT_PAREN:
-    break;
     printf("RIGHT_PAREN ) null\n");
     break;
   case TOKEN_LEFT_BRACE:
@@ -299,7 +298,6 @@ void printToken(Token token) {
     break;
   case TOKEN_DOT:
     printf("DOT . null\n");
-    break;
     break;
   case TOKEN_MINUS:
     printf("MINUS - null\n");
@@ -320,6 +318,7 @@ void printToken(Token token) {
   // One or two character tokens
   case TOKEN_BANG:
     printf("BANG ! null\n");
+    break;
   case TOKEN_BANG_EQUAL:
     printf("BANG_EQUAL != null\n");
     break;
