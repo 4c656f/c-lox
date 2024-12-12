@@ -243,6 +243,9 @@ Token scanToken() {
   case '*': {
     return newToken(TOKEN_STAR);
   }
+  case '/': {
+    return newToken(TOKEN_SLASH);
+  }
   case '!': {
     if (match('=')) {
       return newToken(TOKEN_BANG_EQUAL);
