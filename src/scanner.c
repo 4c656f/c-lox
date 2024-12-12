@@ -237,6 +237,9 @@ Token scanToken() {
   case '-': {
     return newToken(TOKEN_MINUS);
   }
+  case '.': {
+    return newToken(TOKEN_DOT);
+  }
   case '*': {
     return newToken(TOKEN_STAR);
   }
@@ -409,7 +412,7 @@ void printToken(Token token) {
 
   // Special tokens
   case TOKEN_ERROR:
-    printf("ERROR error null\n");
+    printf("ERROR error %.*s\n", token.length, token.start);
     break;
   case TOKEN_EOF:
     printf("EOF  null\n");
