@@ -413,7 +413,7 @@ void printToken(Token token) {
 
   // Special tokens
   case TOKEN_ERROR:
-    fprintf(stderr, "[line %d] ERROR: %.*s\n", token.line, token.length,
+    fprintf(stderr, "[line %d] Error: %.*s\n", token.line, token.length,
             token.start);
     break;
   case TOKEN_EOF:
