@@ -1,6 +1,7 @@
 #include "scanner.h"
 #include <stdbool.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 Scanner scanner;
@@ -199,7 +200,7 @@ Token scanToken() {
   skipWhiteSpaces();
   scanner.start = scanner.current;
   if (isAtEnd()) {
-    return newToken(EOF);
+    return newToken(TOKEN_EOF);
   }
   char tokenChar = advance();
 
@@ -275,4 +276,112 @@ void initScanner(const char *source) {
   scanner.current = source;
   scanner.start = source;
   scanner.line = 1;
+}
+
+char *tokenToString(Token token) {
+  switch (token.type) {
+  // Single-character tokens
+  case TOKEN_LEFT_PAREN:
+    return "LEFT_PAREN ( null";
+  case TOKEN_RIGHT_PAREN:
+    return "RIGHT_PAREN ) null";
+  case TOKEN_LEFT_BRACE:
+    return "LEFT_BRACE { null";
+  case TOKEN_RIGHT_BRACE:
+    return "RIGHT_BRACE } null";
+  case TOKEN_COMMA:
+    return "COMMA , null";
+  case TOKEN_DOT:
+    return "DOT . null";
+  case TOKEN_MINUS:
+    return "MINUS - null";
+  case TOKEN_PLUS:
+    return "PLUS + null";
+  case TOKEN_SEMICOLON:
+    return "SEMICOLON ; null";
+  case TOKEN_SLASH:
+    return "SLASH / null";
+  case TOKEN_STAR:
+    return "STAR * null";
+
+  // One or two character tokens
+  case TOKEN_BANG:
+    return "BANG ! null";
+  case TOKEN_BANG_EQUAL:
+    return "BANG_EQUAL != null";
+  case TOKEN_EQUAL:
+    return "EQUAL = null";
+  case TOKEN_EQUAL_EQUAL:
+    return "EQUAL_EQUAL == null";
+  case TOKEN_GREATER:
+    return "GREATER > null";
+  case TOKEN_GREATER_EQUAL:
+    return "GREATER_EQUAL >= null";
+  case TOKEN_LESS:
+    return "LESS < null";
+  case TOKEN_LESS_EQUAL:
+    return "LESS_EQUAL <= null";
+
+  // Literals
+  case TOKEN_IDENTIFIER: {
+    char *buffer;
+    asprintf(&buffer, "IDENTIFIER %.*s null", token.length, token.start);
+    return buffer;
+  }
+  case TOKEN_STRING: {
+    char *buffer;
+    asprintf(&buffer, "STRING \"%.*s\" %.*s", token.length, token.start,
+             token.length, token.start);
+    return buffer;
+  }
+  case TOKEN_NUMBER: {
+    char *buffer;
+    asprintf(&buffer, "NUMBER %.*s %g", token.length, token.start,
+             strtod(token.start, NULL));
+    return buffer;
+  }
+
+  // Keywords
+  case TOKEN_AND:
+    return "AND and null";
+  case TOKEN_CLASS:
+    return "CLASS class null";
+  case TOKEN_ELSE:
+    return "ELSE else null";
+  case TOKEN_FALSE:
+    return "FALSE false null";
+  case TOKEN_FOR:
+    return "FOR for null";
+  case TOKEN_FUN:
+    return "FUN fun null";
+  case TOKEN_IF:
+    return "IF if null";
+  case TOKEN_NIL:
+    return "NIL nil null";
+  case TOKEN_OR:
+    return "OR or null";
+  case TOKEN_PRINT:
+    return "PRINT print null";
+  case TOKEN_RETURN:
+    return "RETURN return null";
+  case TOKEN_SUPER:
+    return "SUPER super null";
+  case TOKEN_THIS:
+    return "THIS this null";
+  case TOKEN_TRUE:
+    return "TRUE true null";
+  case TOKEN_VAR:
+    return "VAR var null";
+  case TOKEN_WHILE:
+    return "WHILE while null";
+
+  // Special tokens
+  case TOKEN_ERROR:
+    return "ERROR error null";
+  case TOKEN_EOF:
+    return "EOF  null";
+  default: {
+    return "UNKNOWN  null";
+  }
+  }
 }
