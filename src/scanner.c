@@ -278,110 +278,146 @@ void initScanner(const char *source) {
   scanner.line = 1;
 }
 
-char *tokenToString(Token token) {
+void printToken(Token token) {
   switch (token.type) {
   // Single-character tokens
   case TOKEN_LEFT_PAREN:
-    return "LEFT_PAREN ( null";
+    printf("LEFT_PAREN ( null\n");
+    break;
   case TOKEN_RIGHT_PAREN:
-    return "RIGHT_PAREN ) null";
+    break;
+    printf("RIGHT_PAREN ) null\n");
+    break;
   case TOKEN_LEFT_BRACE:
-    return "LEFT_BRACE { null";
+    printf("LEFT_BRACE { null\n");
+    break;
   case TOKEN_RIGHT_BRACE:
-    return "RIGHT_BRACE } null";
+    printf("RIGHT_BRACE } null\n");
+    break;
   case TOKEN_COMMA:
-    return "COMMA , null";
+    printf("COMMA , null\n");
+    break;
   case TOKEN_DOT:
-    return "DOT . null";
+    printf("DOT . null\n");
+    break;
+    break;
   case TOKEN_MINUS:
-    return "MINUS - null";
+    printf("MINUS - null\n");
+    break;
   case TOKEN_PLUS:
-    return "PLUS + null";
+    printf("PLUS + null\n");
+    break;
   case TOKEN_SEMICOLON:
-    return "SEMICOLON ; null";
+    printf("SEMICOLON ; null\n");
+    break;
   case TOKEN_SLASH:
-    return "SLASH / null";
+    printf("SLASH / null\n");
+    break;
   case TOKEN_STAR:
-    return "STAR * null";
+    printf("STAR * null\n");
+    break;
 
   // One or two character tokens
   case TOKEN_BANG:
-    return "BANG ! null";
+    printf("BANG ! null\n");
   case TOKEN_BANG_EQUAL:
-    return "BANG_EQUAL != null";
+    printf("BANG_EQUAL != null\n");
+    break;
   case TOKEN_EQUAL:
-    return "EQUAL = null";
+    printf("EQUAL = null\n");
+    break;
   case TOKEN_EQUAL_EQUAL:
-    return "EQUAL_EQUAL == null";
+    printf("EQUAL_EQUAL == null\n");
+    break;
   case TOKEN_GREATER:
-    return "GREATER > null";
+    printf("GREATER > null\n");
+    break;
   case TOKEN_GREATER_EQUAL:
-    return "GREATER_EQUAL >= null";
+    printf("GREATER_EQUAL >= null\n");
+    break;
   case TOKEN_LESS:
-    return "LESS < null";
+    printf("LESS < null\n");
+    break;
   case TOKEN_LESS_EQUAL:
-    return "LESS_EQUAL <= null";
+    printf("LESS_EQUAL <= null\n");
+    break;
 
   // Literals
   case TOKEN_IDENTIFIER: {
-    char *buffer;
-    asprintf(&buffer, "IDENTIFIER %.*s null", token.length, token.start);
-    return buffer;
+    printf("IDENTIFIER %.*s null\n", token.length, token.start);
+    break;
   }
   case TOKEN_STRING: {
-    char *buffer;
-    asprintf(&buffer, "STRING \"%.*s\" %.*s", token.length, token.start,
-             token.length, token.start);
-    return buffer;
+    printf("STRING \"%.*s\" %.*s\n", token.length, token.start, token.length,
+           token.start);
+    break;
   }
   case TOKEN_NUMBER: {
-    char *buffer;
-    asprintf(&buffer, "NUMBER %.*s %g", token.length, token.start,
-             strtod(token.start, NULL));
-    return buffer;
+    printf("NUMBER %.*s %g\n", token.length, token.start,
+           strtod(token.start, NULL));
+    break;
   }
 
   // Keywords
   case TOKEN_AND:
-    return "AND and null";
+    printf("AND and null\n");
+    break;
   case TOKEN_CLASS:
-    return "CLASS class null";
+    printf("CLASS class null\n");
+    break;
   case TOKEN_ELSE:
-    return "ELSE else null";
+    printf("ELSE else null\n");
+    break;
   case TOKEN_FALSE:
-    return "FALSE false null";
+    printf("FALSE false null\n");
+    break;
   case TOKEN_FOR:
-    return "FOR for null";
+    printf("FOR for null\n");
+    break;
   case TOKEN_FUN:
-    return "FUN fun null";
+    printf("FUN fun null\n");
+    break;
   case TOKEN_IF:
-    return "IF if null";
+    printf("IF if null\n");
+    break;
   case TOKEN_NIL:
-    return "NIL nil null";
+    printf("NIL nil null\n");
+    break;
   case TOKEN_OR:
-    return "OR or null";
+    printf("OR or null\n");
+    break;
   case TOKEN_PRINT:
-    return "PRINT print null";
+    printf("PRINT print null\n");
+    break;
   case TOKEN_RETURN:
-    return "RETURN return null";
+    printf("RETURN return null\n");
+    break;
   case TOKEN_SUPER:
-    return "SUPER super null";
+    printf("SUPER super null\n");
+    break;
   case TOKEN_THIS:
-    return "THIS this null";
+    printf("THIS this null\n");
+    break;
   case TOKEN_TRUE:
-    return "TRUE true null";
+    printf("TRUE true null\n");
+    break;
   case TOKEN_VAR:
-    return "VAR var null";
+    printf("VAR var null\n");
+    break;
   case TOKEN_WHILE:
-    return "WHILE while null";
+    printf("WHILE while null\n");
+    break;
 
   // Special tokens
   case TOKEN_ERROR:
-    return "ERROR error null";
+    printf("ERROR error null\n");
+    break;
   case TOKEN_EOF:
-    return "EOF  null";
+    printf("EOF  null\n");
+    break;
   default: {
-    return "UNKNOWN  null";
+    printf("UNKNOWN  null\n");
+    break;
   }
   }
 }

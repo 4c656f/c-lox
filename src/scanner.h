@@ -66,6 +66,6 @@ void initScanner(const char *source);
 
 Token scanToken();
 
-char *tokenToString(Token token);
+void printToken(Token token);
 
 #endif

@@ -7,7 +7,7 @@ void compile(const char *source) {
   int line = -1;
   for (;;) {
     Token token = scanToken();
-    printf("%s\n", tokenToString(token));
+    printToken(token);
     if (token.type == TOKEN_EOF) {
       break;
     }
