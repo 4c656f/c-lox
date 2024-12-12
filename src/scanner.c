@@ -271,8 +271,9 @@ Token scanToken() {
     return scanString();
   }
   }
-
-  return newErrorToken("Unexpected character.");
+  char buffer[100];
+  sprintf(buffer, "Unexpected character: %c", scanner.start[0]);
+  return newErrorToken(buffer);
 }
 
 void initScanner(const char *source) {
@@ -355,7 +356,7 @@ void printToken(Token token) {
     break;
   }
   case TOKEN_NUMBER: {
-    printf("NUMBER %.*s %g\n", token.length, token.start,
+    printf("NUMBER %.*s %f\n", token.length, token.start,
            strtod(token.start, NULL));
     break;
   }
@@ -412,7 +413,8 @@ void printToken(Token token) {
 
   // Special tokens
   case TOKEN_ERROR:
-    printf("ERROR error %.*s\n", token.length, token.start);
+    fprintf(stderr, "[line %d] ERROR: %.*s\n", token.line, token.length,
+            token.start);
     break;
   case TOKEN_EOF:
     printf("EOF  null\n");

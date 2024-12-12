@@ -85,6 +85,5 @@ Value pop() {
 }
 
 InterpritationResult interpret(char *source) {
-  compile(source);
-  return INTERPRET_OK;
+  return compile(source);
 }
