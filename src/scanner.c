@@ -354,8 +354,8 @@ void printToken(Token token) {
     break;
   }
   case TOKEN_STRING: {
-    printf("STRING %.*s %.*s\n", token.length, token.start, token.length-1,
-           token.start++);
+    printf("STRING %.*s %.*s\n", token.length, token.start, token.length-2,
+           token.start+1);
     break;
   }
   case TOKEN_NUMBER: {
