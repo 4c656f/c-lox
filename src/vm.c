@@ -85,5 +85,19 @@ Value pop() {
 }
 
 InterpritationResult interpret(char *source) {
-  return compile(source);
+  Chunk chunk;
+  initChunk(&chunk);
+
+  if (!compile(source, &chunk)) {
+    freeChunk(&chunk);
+    return INTERPRET_COMPILE_ERROR;
+  }
+
+  vm.chunk = &chunk;
+  vm.ip = vm.chunk->code;
+
+  InterpritationResult result = run();
+  freeChunk(&chunk);
+
+  return result;
 }
