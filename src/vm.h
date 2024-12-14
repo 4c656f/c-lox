@@ -12,7 +12,10 @@ typedef struct {
   uint8_t *ip;
   Value stack[STACK_MAX];
   Value *stackTop;
-} Vm;
+  Obj *objectPool;
+} VM;
+
+
 
 typedef enum {
   INTERPRET_OK,
@@ -20,9 +23,10 @@ typedef enum {
   INTERPRET_RUNTIME_ERROR,
 } InterpritationResult;
 
+extern VM vm;
+
 void initVm();
 void freeVm();
-
 
 InterpritationResult interpret(char *source);
 

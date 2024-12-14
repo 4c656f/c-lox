@@ -5,7 +5,7 @@
 #include "scanner.h"
 
 typedef struct {
-  Token previus;
+  Token previous;
   Token current;
   bool isOk;
   bool isInPanic;
