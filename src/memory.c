@@ -33,7 +33,7 @@ static void freeObject(Obj *object) {
 }
 
 void freeObjectPool() {
-  Obj *cur = vm.objectPool;
+  Obj *cur = vm.objectHeap;
   while (cur != NULL) {
     Obj *next = cur->next;
     freeObject(cur);

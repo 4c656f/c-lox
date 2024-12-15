@@ -2,6 +2,7 @@
 #include "chunk.h"
 #include "compiler.h"
 #include "debug.h"
+#include "hash_table.h"
 #include "memory.h"
 #include "object.h"
 #include "value.h"
@@ -59,10 +60,14 @@ static void concatenate() {
 
 void initVm() {
   resetStack();
-  vm.objectPool = NULL;
+  initHashTable(&vm.strings);
+  vm.objectHeap = NULL;
 }
 
-void freeVm() { freeObjectPool(); }
+void freeVm() {
+  freeObjectPool();
+  freeHashTable(&vm.strings);
+}
 
 InterpritationResult static run() {
 #define READ_BYTE() (*vm.ip++)
