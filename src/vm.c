@@ -60,13 +60,13 @@ static void concatenate() {
 
 void initVm() {
   resetStack();
-  initHashTable(&vm.strings);
+  initHashTable(&vm.stringsPool);
   vm.objectHeap = NULL;
 }
 
 void freeVm() {
   freeObjectPool();
-  freeHashTable(&vm.strings);
+  freeHashTable(&vm.stringsPool);
 }
 
 InterpritationResult static run() {

@@ -2,6 +2,7 @@
 #define clox_hash_table_h
 
 #include "value.h"
+#include <stdint.h>
 
 typedef struct {
   ObjString *key;
@@ -22,9 +23,11 @@ bool getTableValue(HashTable *table, ObjString *key, Value *value);
 
 bool setTableValue(HashTable *table, ObjString *key, Value value);
 
-void tableAddAll(HashTable* from, HashTable* to);
+void tableAddAll(HashTable *from, HashTable *to);
 
-bool deleteTableValue(HashTable* table, ObjString* key);
+bool deleteTableValue(HashTable *table, ObjString *key);
 
+ObjString *findTableString(HashTable *table, const char *string, int length,
+                           uint32_t hash);
 
 #endif

@@ -2,6 +2,9 @@
 #include "memory.h"
 #include "object.h"
 #include "value.h"
+#include <stdbool.h>
+#include <stdint.h>
+#include <string.h>
 
 #define TABLE_MAX_LOAD 0.75
 
@@ -11,10 +14,15 @@ static Entry *findEntry(Entry *entries, ObjString *key, int capacity) {
 
   while (true) {
     Entry *entryToCheck = &entries[initBucketIdx];
+    // we reach empty or tombstone bucket
     if (entryToCheck->key == NULL) {
+      // is bucket empty
       if (IS_NIL(entryToCheck->value)) {
+        // if we reach tombstone previusly, return it as match bucket
         return tombstone != NULL ? tombstone : entryToCheck;
       } else {
+        // we reach tumbstone, we need to continue and remember tombstone if it
+        // is a first occurrencie
         if (tombstone == NULL)
           tombstone = entryToCheck;
       }
@@ -28,6 +36,28 @@ static Entry *findEntry(Entry *entries, ObjString *key, int capacity) {
   }
   // unreacheble cause of load factor
   return NULL;
+}
+
+ObjString *findTableString(HashTable *table, const char *string, int length,
+                           uint32_t hash) {
+  uint32_t bucketIdx = hash % table->capacity;
+  Entry *tombstone = NULL;
+  while (true) {
+    Entry *entryToCheck = &table->entries[bucketIdx];
+    if (entryToCheck->key == NULL) {
+      // bucket is not set
+      if (IS_NIL(entryToCheck->value)) {
+        return NULL;
+      }
+      continue;
+    }
+    if (entryToCheck->key->length == length &&
+        entryToCheck->key->hash == hash &&
+        memcmp(entryToCheck->key->chars, string, length) == 0) {
+      return entryToCheck->key;
+    }
+    bucketIdx = (bucketIdx + 1) % table->capacity;
+  }
 }
 
 static void realocateHashTable(HashTable *table, int newCap) {
