@@ -9,6 +9,7 @@
 #define TABLE_MAX_LOAD 0.75
 
 static Entry *findEntry(Entry *entries, ObjString *key, int capacity) {
+
   uint32_t initBucketIdx = key->hash % capacity;
   Entry *tombstone = NULL;
 
@@ -40,6 +41,9 @@ static Entry *findEntry(Entry *entries, ObjString *key, int capacity) {
 
 ObjString *findTableString(HashTable *table, const char *string, int length,
                            uint32_t hash) {
+  if (table->count == 0) {
+    return NULL;
+  }
   uint32_t bucketIdx = hash % table->capacity;
   Entry *tombstone = NULL;
   while (true) {
@@ -142,8 +146,9 @@ void tableAddAll(HashTable *from, HashTable *to) {
 }
 
 bool deleteTableValue(HashTable *table, ObjString *key) {
-  if (table->count == 0)
+  if (table->count == 0) {
     return false;
+  }
   Entry *foundedEntry = findEntry(table->entries, key, table->capacity);
   if (foundedEntry->key == NULL) {
     return false;

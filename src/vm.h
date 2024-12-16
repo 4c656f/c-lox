@@ -14,6 +14,7 @@ typedef struct {
   Value stack[STACK_MAX];
   Value *stackTop;
   HashTable stringsPool;
+  HashTable globals;
   Obj *objectHeap;
 } VM;
 

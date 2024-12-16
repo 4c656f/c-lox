@@ -61,17 +61,20 @@ static void concatenate() {
 void initVm() {
   resetStack();
   initHashTable(&vm.stringsPool);
+  initHashTable(&vm.globals);
   vm.objectHeap = NULL;
 }
 
 void freeVm() {
   freeObjectPool();
   freeHashTable(&vm.stringsPool);
+  freeHashTable(&vm.globals);
 }
 
 InterpritationResult static run() {
 #define READ_BYTE() (*vm.ip++)
 #define READ_CONSTANT() (vm.chunk->constants.values[READ_BYTE()])
+#define READ_STRING() AS_STRING(READ_CONSTANT())
 #define BINARY_OP(valueType, op)                                               \
   do {                                                                         \
     if (!IS_NUMBER(peek(0)) || !IS_NUMBER(peek(1))) {                          \
@@ -97,8 +100,6 @@ InterpritationResult static run() {
 #endif
     switch (instruction = READ_BYTE()) {
     case OP_RETURN: {
-      printValue(pop());
-      printf("\n");
       return INTERPRET_OK;
     }
     case OP_NEGATE: {
@@ -165,11 +166,38 @@ InterpritationResult static run() {
       push(constant);
       break;
     }
+    case OP_PRINT: {
+      printValue(pop());
+      printf("\n");
+      break;
+    }
+    case OP_POP: {
+      pop();
+      break;
+    }
+    case OP_DEFINE_GLOBAL: {
+      ObjString *name = READ_STRING();
+      setTableValue(&vm.globals, name, peek(0));
+      // pop variable value
+      pop();
+      break;
+    }
+    case OP_GET_GLOBAL: {
+      ObjString *name = READ_STRING();
+      Value variableValue;
+      if (!getTableValue(&vm.globals, name, &variableValue)) {
+        runtimeError("Undefined variable '%s'.", name->chars);
+        return INTERPRET_RUNTIME_ERROR;
+      }
+      push(variableValue);
+      break;
+    }
     }
   }
 #undef BINARY_OP
 #undef READ_BYTE
 #undef READ_CONSTANT
+#undef READ_STRING
 }
 
 InterpritationResult interpret(char *source) {
