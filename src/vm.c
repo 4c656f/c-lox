@@ -192,6 +192,16 @@ InterpritationResult static run() {
       push(variableValue);
       break;
     }
+    case OP_SET_GLOBAL: {
+      ObjString *name = READ_STRING();
+      Value variableValue;
+      if (!getTableValue(&vm.globals, name, &variableValue)) {
+        runtimeError("Undefined variable '%s'.", name->chars);
+        return INTERPRET_RUNTIME_ERROR;
+      }
+      setTableValue(&vm.globals, name, peek(0));
+      break;
+    }
     }
   }
 #undef BINARY_OP
