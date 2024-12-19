@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/_types/_off_t.h>
 #include <sys/_types/_uid_t.h>
 
 Parser parser;
@@ -122,6 +123,30 @@ static void emitByte(uint8_t byte) {
 static void emitBytes(uint8_t byte1, uint8_t byte2) {
   emitByte(byte1);
   emitByte(byte2);
+}
+
+static int emitJump(uint8_t jumpInstruction) {
+  // emit jump instruction
+  emitByte(jumpInstruction);
+  // and then short 16 bit jump pointer
+  emitByte(0xff);
+  emitByte(0xff);
+  // JUMP_INSTRUCTION
+  // OFFSET 8 MSB               <-|
+  // OFFSET 8 LSN                 |
+  // return pointer to offset MSB |
+  return getCurrentChunk()->count - 2;
+}
+
+static void patchJump(int offset) {
+  // -2 is for encoded short offset itself, because after reading the offset, we
+  // whant to jump next x inctructions
+  int jumpTo = getCurrentChunk()->count - offset - 2;
+  if (jumpTo > UINT16_MAX) {
+    errorAtPrevius("To long jump");
+  }
+  getCurrentChunk()->code[offset] = (jumpTo >> 8) & 0xff;
+  getCurrentChunk()->code[offset + 1] = jumpTo & 0xff;
 }
 
 static void beginScope() { current->scopeDepth++; }
@@ -333,6 +358,22 @@ static void variable(bool canAssign) {
   namedVariable(parser.previous, canAssign);
 }
 
+static void and_(bool canAssign) {
+  int jump = emitJump(OP_JUMP_IF_FALSE);
+  emitByte(OP_POP);
+  parsePrecedence(PREC_AND);
+  patchJump(jump);
+}
+
+static void or_(bool canAssign) {
+  int orJump = emitJump(OP_JUMP_IF_FALSE);
+  int jump = emitJump(OP_JUMP);
+  patchJump(orJump);
+  emitByte(OP_POP);
+  parsePrecedence(PREC_OR);
+  patchJump(jump);
+}
+
 ParseRule rules[] = {
     [TOKEN_LEFT_PAREN] = {grouping, NULL, PREC_NONE},
     [TOKEN_RIGHT_PAREN] = {NULL, NULL, PREC_NONE},
@@ -356,7 +397,7 @@ ParseRule rules[] = {
     [TOKEN_IDENTIFIER] = {variable, NULL, PREC_NONE},
     [TOKEN_STRING] = {string, NULL, PREC_NONE},
     [TOKEN_NUMBER] = {number, NULL, PREC_NONE},
-    [TOKEN_AND] = {NULL, NULL, PREC_NONE},
+    [TOKEN_AND] = {NULL, and_, PREC_AND},
     [TOKEN_CLASS] = {NULL, NULL, PREC_NONE},
     [TOKEN_ELSE] = {NULL, NULL, PREC_NONE},
     [TOKEN_FALSE] = {literal, NULL, PREC_NONE},
@@ -364,7 +405,7 @@ ParseRule rules[] = {
     [TOKEN_FUN] = {NULL, NULL, PREC_NONE},
     [TOKEN_IF] = {NULL, NULL, PREC_NONE},
     [TOKEN_NIL] = {literal, NULL, PREC_NONE},
-    [TOKEN_OR] = {NULL, NULL, PREC_NONE},
+    [TOKEN_OR] = {NULL, or_, PREC_OR},
     [TOKEN_PRINT] = {NULL, NULL, PREC_NONE},
     [TOKEN_RETURN] = {NULL, NULL, PREC_NONE},
     [TOKEN_SUPER] = {NULL, NULL, PREC_NONE},
@@ -422,6 +463,23 @@ static void printStatemnt() {
   emitByte(OP_PRINT);
 }
 
+static void ifStatemnt() {
+  consume(TOKEN_LEFT_PAREN, "Expect ( after if statemnt");
+  expression();
+  consume(TOKEN_RIGHT_PAREN, "Expect ) after if statemnt");
+  int thenJump = emitJump(OP_JUMP_IF_FALSE);
+  emitByte(OP_POP);
+  statemnt();
+  int elseJump = emitJump(OP_JUMP);
+  patchJump(thenJump);
+  emitByte(OP_POP);
+
+  if (match(TOKEN_ELSE)) {
+    statemnt();
+  }
+  patchJump(elseJump);
+}
+
 static void synchronize() {
   parser.isInPanic = false;
 
@@ -450,17 +508,20 @@ static void statemnt() {
   if (match(TOKEN_PRINT)) {
     printStatemnt();
     return;
+  } else if (match(TOKEN_IF)) {
+    ifStatemnt();
+  } else if (match(TOKEN_LEFT_BRACE)) {
+    beginScope();
+    block();
+    endScope();
+  } else {
+    expressionStatemnt();
   }
-  expressionStatemnt();
 }
 
 static void declaration() {
   if (match(TOKEN_VAR)) {
     varDeclaration();
-  } else if (match(TOKEN_LEFT_BRACE)) {
-    beginScope();
-    block();
-    endScope();
   } else {
     statemnt();
   }
