@@ -133,7 +133,7 @@ static int emitJump(uint8_t jumpInstruction) {
   emitByte(0xff);
   // JUMP_INSTRUCTION
   // OFFSET 8 MSB               <-|
-  // OFFSET 8 LSN                 |
+  // OFFSET 8 LSB                 |
   // return pointer to offset MSB |
   return getCurrentChunk()->count - 2;
 }
@@ -147,6 +147,19 @@ static void patchJump(int offset) {
   }
   getCurrentChunk()->code[offset] = (jumpTo >> 8) & 0xff;
   getCurrentChunk()->code[offset + 1] = jumpTo & 0xff;
+}
+
+static void emitLoop(int offset) {
+  emitByte(OP_LOOP);
+  // -2 is for encoded short offset itself, because after reading the offset, we
+  // whant to jump next x inctructions
+  int jumpTo = getCurrentChunk()->count - offset + 2;
+
+  if (jumpTo > UINT16_MAX) {
+    errorAtPrevius("To long loop");
+  }
+  emitByte((jumpTo >> 8) & 0xff);
+  emitByte(jumpTo & 0xff);
 }
 
 static void beginScope() { current->scopeDepth++; }
@@ -480,6 +493,62 @@ static void ifStatemnt() {
   patchJump(elseJump);
 }
 
+static void whileStatemnt() {
+  int loopStartOffset = getCurrentChunk()->count;
+  consume(TOKEN_LEFT_PAREN, "Expect ( before 'while' statemnt");
+  expression();
+  consume(TOKEN_RIGHT_PAREN, "Expect ) after 'while' statemnt");
+  int thenJump = emitJump(OP_JUMP_IF_FALSE);
+
+  emitByte(OP_POP);
+  statemnt();
+  emitLoop(loopStartOffset);
+
+  patchJump(thenJump);
+  emitByte(OP_POP);
+}
+
+static void forStatemnt() {
+  beginScope();
+  consume(TOKEN_LEFT_PAREN, "Expect ( before for statemnt");
+  if (match(TOKEN_SEMICOLON)) {
+
+  } else if (match(TOKEN_VAR)) {
+    varDeclaration();
+  } else {
+    expressionStatemnt();
+  }
+  int exitJump = -1;
+  int incrementJump = getCurrentChunk()->count;
+  if (!match(TOKEN_SEMICOLON)) {
+    expression();
+    consume(TOKEN_SEMICOLON, "Expect ';' after epression");
+    exitJump = emitJump(OP_JUMP_IF_FALSE);
+    emitByte(OP_POP);
+  }
+  int jumpToBody = emitJump(OP_JUMP);
+
+  int loopJump = getCurrentChunk()->count;
+  if (!match(TOKEN_RIGHT_PAREN)) {
+    expression();
+    consume(TOKEN_RIGHT_PAREN, "Expect ) after for statemnt");
+    emitByte(OP_POP);
+  }
+  emitLoop(incrementJump);
+
+  patchJump(jumpToBody);
+
+  statemnt();
+
+  emitLoop(loopJump);
+
+  if (exitJump != -1) {
+    patchJump(exitJump);
+    emitByte(OP_POP);
+  }
+  endScope();
+}
+
 static void synchronize() {
   parser.isInPanic = false;
 
@@ -514,6 +583,10 @@ static void statemnt() {
     beginScope();
     block();
     endScope();
+  } else if (match(TOKEN_WHILE)) {
+    whileStatemnt();
+  } else if (match(TOKEN_FOR)) {
+    forStatemnt();
   } else {
     expressionStatemnt();
   }
