@@ -1,4 +1,5 @@
 #include "object.h"
+#include "chunk.h"
 #include "hash_table.h"
 #include "memory.h"
 #include "value.h"
@@ -37,6 +38,14 @@ static ObjString *allocateString(char *chars, int length, uint32_t hash) {
   return string;
 }
 
+ObjFunction *newFunction() {
+  ObjFunction *function = ALLOCATE_OBJ(ObjFunction, OBJ_FUNCTION);
+  function->arity = 0;
+  function->name = NULL;
+  initChunk(&function->chunk);
+  return function;
+}
+
 ObjString *copyString(const char *string, int length) {
   uint32_t hash = hashString(string, length);
   ObjString *stringFromPool =
@@ -63,10 +72,22 @@ ObjString *takeString(char *string, int length) {
   return allocateString(string, length, hash);
 }
 
+static void printFunction(ObjFunction *function) {
+  if (function->name == NULL) {
+    printf("<script>");
+    return;
+  }
+  printf("<fn %s>", function->name->chars);
+}
+
 void printObject(Value value) {
   switch (OBJ_TYPE(value)) {
   case OBJ_STRING: {
     printf("%s", AS_CSTRING(value));
+    break;
+  }
+  case OBJ_FUNCTION: {
+    printFunction(AS_FUNCTION(value));
     break;
   }
   }

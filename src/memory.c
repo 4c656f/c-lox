@@ -1,5 +1,6 @@
 #include <stdlib.h>
 
+#include "chunk.h"
 #include "memory.h"
 #include "object.h"
 #include "value.h"
@@ -27,6 +28,13 @@ static void freeObject(Obj *object) {
     ObjString *stringObj = (ObjString *)object;
     FREE_ARRAY(char *, stringObj->chars, stringObj->length + 1);
     FREE(ObjString, stringObj);
+    break;
+  }
+  case OBJ_FUNCTION: {
+    ObjFunction *functionObj = (ObjFunction *)object;
+    freeObject((Obj *)functionObj->name);
+    freeChunk(&functionObj->chunk);
+    FREE(ObjFunction, functionObj);
     break;
   }
   }

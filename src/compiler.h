@@ -2,6 +2,7 @@
 #define clox_compiler_h
 
 #include "chunk.h"
+#include "object.h"
 #include "scanner.h"
 
 #define UINT8_COUNT (UINT8_MAX + 1)
@@ -18,12 +19,6 @@ typedef struct {
   int depth;
 } Local;
 
-typedef struct {
-  Local locals[UINT8_COUNT];
-  int localCount;
-  int scopeDepth;
-} Compiler;
-
-bool compile(const char *source, Chunk *chunk);
+ObjFunction* compile(const char *source);
 
 #endif
