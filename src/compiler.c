@@ -14,7 +14,7 @@
 
 typedef enum { TYPE_FUNCTION, TYPE_SCRIPT } FunctionType;
 
-typedef struct {
+typedef struct Compiler {
   struct Compiler *enclosing;
 
   ObjFunction *function;
@@ -54,12 +54,13 @@ static Chunk *getCurrentChunk() { return &current->function->chunk; }
 
 static void initCompiler(Compiler *compiler, FunctionType type) {
   compiler->enclosing = current;
-
-  compiler->localCount = 0;
-  compiler->scopeDepth = 0;
   compiler->function = NULL;
   compiler->type = type;
 
+  compiler->localCount = 0;
+  compiler->scopeDepth = 0;
+
+  compiler->function = newFunction();
   current = compiler;
 
   if (type != TYPE_SCRIPT) {
@@ -269,7 +270,10 @@ static void emitConstant(Value value) {
   emitBytes(OP_CONSTANT, makeConstant(value));
 }
 
-static void emitReturn() { emitByte(OP_RETURN); }
+static void emitReturn() {
+  emitByte(OP_NIL);
+  emitByte(OP_RETURN);
+}
 
 static ObjFunction *endCompiler() {
   emitReturn();
@@ -362,6 +366,9 @@ static uint8_t argumentList() {
   if (!check(TOKEN_RIGHT_PAREN)) {
     do {
       expression();
+      if (argCount == 255) {
+        errorAtPrevius("Can't have more than 255 arguments.");
+      }
       argCount++;
     } while (match(TOKEN_COMMA));
   }
@@ -535,7 +542,8 @@ static void function(FunctionType type) {
 
 static void functionDeclaration() {
   uint8_t functionNameIdx = parseVariable("Expect function name.");
-
+  markInitialized();
+  function(TYPE_FUNCTION);
   defineVariable(functionNameIdx);
   return;
 }
@@ -562,6 +570,19 @@ static void printStatemnt() {
   expression();
   consume(TOKEN_SEMICOLON, "Expect ';' after value.");
   emitByte(OP_PRINT);
+}
+
+static void returnStatement() {
+  if (current->type == TYPE_SCRIPT) {
+    errorAtPrevius("Can't return from top-level code.");
+  }
+  if (match(TOKEN_SEMICOLON)) {
+    emitReturn();
+  } else {
+    expression();
+    consume(TOKEN_SEMICOLON, "Expect ';' after return value.");
+    emitByte(OP_RETURN);
+  }
 }
 
 static void ifStatemnt() {
@@ -667,6 +688,8 @@ static void statemnt() {
     return;
   } else if (match(TOKEN_IF)) {
     ifStatemnt();
+  } else if (match(TOKEN_RETURN)) {
+    returnStatement();
   } else if (match(TOKEN_LEFT_BRACE)) {
     beginScope();
     block();
@@ -682,7 +705,7 @@ static void statemnt() {
 
 static void declaration() {
   if (match(TOKEN_FUN)) {
-
+    functionDeclaration();
   } else if (match(TOKEN_VAR)) {
     varDeclaration();
   } else {
@@ -704,7 +727,6 @@ ObjFunction *compile(const char *source) {
   while (!match(TOKEN_EOF)) {
     declaration();
   }
-  // consume(TOKEN_EOF, "Expect end of expression.");
   ObjFunction *function = endCompiler();
   if (parser.isOk) {
     return function;

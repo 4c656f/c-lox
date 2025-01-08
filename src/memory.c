@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <stdlib.h>
 
 #include "chunk.h"
@@ -31,10 +32,13 @@ static void freeObject(Obj *object) {
     break;
   }
   case OBJ_FUNCTION: {
-    ObjFunction *functionObj = (ObjFunction *)object;
-    freeObject((Obj *)functionObj->name);
-    freeChunk(&functionObj->chunk);
-    FREE(ObjFunction, functionObj);
+    ObjFunction *function = (ObjFunction *)object;
+    freeChunk(&function->chunk);
+    FREE(ObjFunction, object);
+    break;
+  }
+  case OBJ_NATIVE: {
+    FREE(ObjNative, object);
     break;
   }
   }
