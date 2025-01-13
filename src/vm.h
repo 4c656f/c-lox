@@ -13,7 +13,9 @@
 
 typedef struct {
   ObjFunction *function;
+  // pointer to the current instruction inside function chunk object
   uint8_t *ip;
+  // realtive pointer to the top of the stack of current CallFrame window
   Value *slots;
 } CallFrame;
 
