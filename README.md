@@ -12,16 +12,17 @@ Here's what's currently implemented in this interpreter:
 
 | Feature | Status |
 |---------|---------|
-| Scanner | 🚧 |
-| Basic Arithmetic | 🚧 |
-| Variables | 🚧 |
-| Control Flow (if/else) | 🚧 |
-| Loops (while, for) | 🚧 |
-| Functions | 🚧 |
-| Closures | 🚧 |
+| Scanner | ✅ |
+| Basic Arithmetic | ✅ |
+| Variables | ✅ |
+| Control Flow (if/else) | ✅ |
+| Loops (while, for) | ✅ |
+| Functions | ✅ |
+| Closures | ✅ |
+| Standard Library | ✅ |
+| GC | 🚧 |
 | Classes | 🚧 |
 | Inheritance | 🚧 |
-| Standard Library | 🚧 |
 | Error Handling | 🚧 |
 
 ## Contributing 🤝
@@ -37,5 +38,3 @@ I will be glad to receive any of your questions/suggestions/contributions to thi
 ---
 
 For more information about the Lox language, visit [Crafting Interpreters](https://craftinginterpreters.com/).
-
-*Note: This implementation is for educational purposes and may not be suitable for production use.*
