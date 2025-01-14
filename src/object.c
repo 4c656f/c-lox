@@ -1,5 +1,6 @@
 #include "object.h"
 #include "chunk.h"
+#include "compiler.h"
 #include "hash_table.h"
 #include "memory.h"
 #include "value.h"
@@ -41,9 +42,30 @@ static ObjString *allocateString(char *chars, int length, uint32_t hash) {
 ObjFunction *newFunction() {
   ObjFunction *function = ALLOCATE_OBJ(ObjFunction, OBJ_FUNCTION);
   function->arity = 0;
+  function->upvalueCount = 0;
   function->name = NULL;
   initChunk(&function->chunk);
   return function;
+}
+
+ObjClosure *newClosure(ObjFunction *function) {
+  ObjUpvalue **upvalues = ALLOCATE(ObjUpvalue *, function->upvalueCount);
+  for (int i = 0; i < function->upvalueCount; i++) {
+    upvalues[i] = NULL;
+  }
+  ObjClosure *closure = ALLOCATE_OBJ(ObjClosure, OBJ_CLOSURE);
+  closure->function = function;
+  closure->upvalues = upvalues;
+  closure->upvalueCount = function->upvalueCount;
+  return closure;
+}
+
+ObjUpvalue *newUpvalue(Value *slot) {
+  ObjUpvalue *upvalue = ALLOCATE_OBJ(ObjUpvalue, OBJ_UPVALUE);
+  upvalue->location = slot;
+  upvalue->next = NULL;
+  upvalue->closed = NIL_VAL;
+  return upvalue;
 }
 
 ObjNative *newNative(NativeFn function) {
@@ -98,6 +120,14 @@ void printObject(Value value) {
   }
   case OBJ_FUNCTION: {
     printFunction(AS_FUNCTION(value));
+    break;
+  }
+  case OBJ_CLOSURE: {
+    printFunction(AS_CLOSURE(value)->function);
+    break;
+  }
+  case OBJ_UPVALUE: {
+    printf("upvalue");
     break;
   }
   }

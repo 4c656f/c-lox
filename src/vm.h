@@ -2,17 +2,17 @@
 #define clox_vm_h
 
 #include "chunk.h"
+#include "compiler.h"
 #include "hash_table.h"
 #include "object.h"
 #include "value.h"
-#include "compiler.h"
 #include <stdint.h>
 
 #define FRAMES_MAX 64
 #define STACK_MAX (FRAMES_MAX * UINT8_COUNT)
 
 typedef struct {
-  ObjFunction *function;
+  ObjClosure *closure;
   // pointer to the current instruction inside function chunk object
   uint8_t *ip;
   // realtive pointer to the top of the stack of current CallFrame window
@@ -22,7 +22,7 @@ typedef struct {
 typedef struct {
   CallFrame frames[FRAMES_MAX];
   int frameCount;
-  
+
   Value stack[STACK_MAX];
   Value *stackTop;
 
@@ -30,6 +30,8 @@ typedef struct {
   HashTable globals;
 
   Obj *objectHeap;
+
+  ObjUpvalue *openUpvalues;
 } VM;
 
 typedef enum {

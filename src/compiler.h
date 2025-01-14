@@ -14,11 +14,6 @@ typedef struct {
   bool isInPanic;
 } Parser;
 
-typedef struct {
-  Token name;
-  int depth;
-} Local;
-
 ObjFunction* compile(const char *source);
 
 #endif
