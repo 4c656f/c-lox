@@ -157,3 +157,20 @@ bool deleteTableValue(HashTable *table, ObjString *key) {
   foundedEntry->value = BOOL_VAL(true);
   return true;
 }
+
+void markTable(HashTable *table) {
+  for (int idx = 0; idx < table->capacity; idx++) {
+    Entry *cur = &table->entries[idx];
+    markObject((Obj *)cur->key);
+    markValue(cur->value);
+  }
+}
+
+void tableRemoveWhite(HashTable *table) {
+  for (int i = 0; i < table->capacity; i++) {
+    Entry *entry = &table->entries[i];
+    if (entry->key != NULL && !entry->key->obj.isMarked) {
+      deleteTableValue(table, entry->key);
+    }
+  }
+}

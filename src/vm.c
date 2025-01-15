@@ -162,6 +162,11 @@ void initVm() {
   defineNative("clock", clockNative);
 
   vm.objectHeap = NULL;
+  vm.grayCap = 0;
+  vm.grayCount = 0;
+  vm.grayStack = NULL;
+  vm.bytesAllocated = 0;
+  vm.nextGC = 1024 * 1024;
 }
 
 void freeVm() {

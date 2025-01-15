@@ -30,4 +30,10 @@ bool deleteTableValue(HashTable *table, ObjString *key);
 ObjString *findTableString(HashTable *table, const char *string, int length,
                            uint32_t hash);
 
+void markTable(HashTable* table);
+
+void tableRemoveWhite(HashTable* table);
+
+
+
 #endif

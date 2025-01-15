@@ -26,7 +26,12 @@ static Obj *allocateObject(size_t size, ObjType type) {
 
   object->type = type;
   object->next = vm.objectHeap;
+  object->isMarked = false;
   vm.objectHeap = object;
+
+#ifdef DEBUG_LOG_GC
+  printf("%p allocate %zu for %d\n", (void *)object, size, type);
+#endif
   return object;
 }
 
@@ -111,7 +116,7 @@ static void printFunction(ObjFunction *function) {
 void printObject(Value value) {
   switch (OBJ_TYPE(value)) {
   case OBJ_STRING: {
-    printf("%s", AS_CSTRING(value));
+    printf("string %s", AS_CSTRING(value));
     break;
   }
   case OBJ_NATIVE: {
