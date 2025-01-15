@@ -141,22 +141,22 @@ static bool isFalsey(Value value) {
 }
 
 static void concatenate() {
-  ObjString *rhs = AS_STRING(pop());
-  ObjString *lhs = AS_STRING(pop());
+  ObjString *rhs = AS_STRING(peek(0));
+  ObjString *lhs = AS_STRING(peek(1));
   int newLen = lhs->length + rhs->length;
   char *newString = ALLOCATE(char, newLen + 1);
   memcpy(newString, lhs->chars, lhs->length);
   memcpy(newString + lhs->length, rhs->chars, rhs->length);
-
   newString[newLen] = '\0';
   ObjString *obj = takeString(newString, newLen);
-
+  pop();
+  pop();
   push(OBJ_VAL(obj));
 }
 
 static void numberToString() {
-  Value rhs = pop();
-  Value lhs = pop();
+  Value rhs = peek(0);
+  Value lhs = peek(1);
   ObjString *string = NULL;
   double number = 0;
 
@@ -195,13 +195,14 @@ static void numberToString() {
   newString[totalLen] = '\0';
 
   ObjString *obj = takeString(newString, totalLen);
-
+  pop();
+  pop();
   push(OBJ_VAL(obj));
 }
 
 void initVm() {
   vm.bytesAllocated = 0;
-  vm.nextGC = 1024 * 1024;
+  vm.nextGC = 1024;
   vm.objectHeap = NULL;
   vm.grayCap = 0;
   vm.grayCount = 0;

@@ -115,7 +115,7 @@ static void markArray(ValueArray *array) {
 
 static void blackenObject(Obj *object) {
 #ifdef DEBUG_LOG_GC
-  printf("%p blacken %d", (void *)object, object->type);
+  printf("%p blacken %d\n", (void *)object, object->type);
   printValue(OBJ_VAL(object));
   printf("\n");
 #endif
@@ -198,7 +198,7 @@ void static markRoots() {
 }
 
 void runGc() {
-#ifdef DEBUG_LOG_GC
+#ifdef DEBUG_LOG_STATS_GC
   printf("-- gc begin\n");
   size_t before = vm.bytesAllocated;
 
@@ -209,9 +209,9 @@ void runGc() {
   tableRemoveWhite(&vm.stringsPool);
   sweep();
   vm.nextGC = vm.bytesAllocated * GC_HEAP_GROW_FACTOR;
-#ifdef DEBUG_LOG_GC
+#ifdef DEBUG_LOG_STATS_GC
   printf("-- gc end\n");
-  printf("   collected %zu bytes (from %zu to %zu) next at %zu\n",
-         before - vm.bytesAllocated, before, vm.bytesAllocated, vm.nextGC);
+  printf("   collected %zu bytes, alocated: %zu next at %zu\n",
+         before - vm.bytesAllocated, vm.bytesAllocated, vm.nextGC);
 #endif
 }

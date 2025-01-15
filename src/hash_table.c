@@ -10,10 +10,10 @@
 
 static Entry *findEntry(Entry *entries, ObjString *key, int capacity) {
 
-  uint32_t initBucketIdx = key->hash % capacity;
+  uint32_t initBucketIdx = key->hash & (capacity - 1);
   Entry *tombstone = NULL;
 
-  while (true) {
+  for (;;) {
     Entry *entryToCheck = &entries[initBucketIdx];
     // we reach empty or tombstone bucket
     if (entryToCheck->key == NULL) {
@@ -27,13 +27,11 @@ static Entry *findEntry(Entry *entries, ObjString *key, int capacity) {
         if (tombstone == NULL)
           tombstone = entryToCheck;
       }
-      continue;
-    }
-    if (entryToCheck->key == key) {
+    } else if (entryToCheck->key == key) {
       return entryToCheck;
     }
 
-    initBucketIdx = (initBucketIdx + 1) % capacity;
+    initBucketIdx = (initBucketIdx + 1) & (capacity - 1);
   }
   // unreacheble cause of load factor
   return NULL;
@@ -44,23 +42,22 @@ ObjString *findTableString(HashTable *table, const char *string, int length,
   if (table->count == 0) {
     return NULL;
   }
-  uint32_t bucketIdx = hash % table->capacity;
+  uint32_t bucketIdx = hash & (table->capacity - 1);
   Entry *tombstone = NULL;
-  while (true) {
+  for (;;) {
     Entry *entryToCheck = &table->entries[bucketIdx];
     if (entryToCheck->key == NULL) {
       // bucket is not set
       if (IS_NIL(entryToCheck->value)) {
         return NULL;
       }
-      continue;
-    }
-    if (entryToCheck->key->length == length &&
-        entryToCheck->key->hash == hash &&
-        memcmp(entryToCheck->key->chars, string, length) == 0) {
+
+    } else if (entryToCheck->key->length == length &&
+               entryToCheck->key->hash == hash &&
+               memcmp(entryToCheck->key->chars, string, length) == 0) {
       return entryToCheck->key;
     }
-    bucketIdx = (bucketIdx + 1) % table->capacity;
+    bucketIdx = (bucketIdx + 1) & (table->capacity - 1);
   }
 }
 
