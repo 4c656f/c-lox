@@ -116,7 +116,7 @@ static void printFunction(ObjFunction *function) {
 void printObject(Value value) {
   switch (OBJ_TYPE(value)) {
   case OBJ_STRING: {
-    printf("string %s", AS_CSTRING(value));
+    printf("%s", AS_CSTRING(value));
     break;
   }
   case OBJ_NATIVE: {

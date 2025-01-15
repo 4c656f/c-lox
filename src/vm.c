@@ -154,19 +154,63 @@ static void concatenate() {
   push(OBJ_VAL(obj));
 }
 
+static void numberToString() {
+  Value rhs = pop();
+  Value lhs = pop();
+  ObjString *string = NULL;
+  double number = 0;
+
+  if (IS_STRING(rhs)) {
+    string = AS_STRING(rhs);
+    number = AS_NUMBER(lhs);
+  } else {
+    string = AS_STRING(lhs);
+    number = AS_NUMBER(rhs);
+  }
+
+  // Buffer for the number conversion
+  char numberStr[32];
+  int numberLen = snprintf(numberStr, sizeof(numberStr), "%.14g", number);
+
+  // Calculate total length
+  int totalLen = string->length + numberLen;
+
+  // Allocate new buffer for concatenated string
+  char *newString = ALLOCATE(char, totalLen + 1); // +1 for null terminator
+
+  if (IS_STRING(rhs)) {
+    // Copy the existing string
+    memcpy(newString, numberStr, numberLen);
+
+    // Copy the number string
+    memcpy(newString + numberLen, string->chars, string->length);
+  } else {
+    // Copy the existing string
+    memcpy(newString, string->chars, string->length);
+
+    // Copy the number string
+    memcpy(newString + string->length, numberStr, numberLen);
+  }
+  // Null terminate the string
+  newString[totalLen] = '\0';
+
+  ObjString *obj = takeString(newString, totalLen);
+
+  push(OBJ_VAL(obj));
+}
+
 void initVm() {
+  vm.bytesAllocated = 0;
+  vm.nextGC = 1024 * 1024;
+  vm.objectHeap = NULL;
+  vm.grayCap = 0;
+  vm.grayCount = 0;
+  vm.grayStack = NULL;
   resetStack();
   initHashTable(&vm.stringsPool);
   initHashTable(&vm.globals);
 
   defineNative("clock", clockNative);
-
-  vm.objectHeap = NULL;
-  vm.grayCap = 0;
-  vm.grayCount = 0;
-  vm.grayStack = NULL;
-  vm.bytesAllocated = 0;
-  vm.nextGC = 1024 * 1024;
 }
 
 void freeVm() {
@@ -238,6 +282,9 @@ InterpritationResult static run() {
         double rhs = AS_NUMBER(pop());
         double lhs = AS_NUMBER(pop());
         push(NUMBER_VAL(lhs + rhs));
+      } else if (IS_NUMBER(peek(0)) && IS_STRING(peek(1)) ||
+                 IS_STRING(peek(0)) && IS_NUMBER(peek(1))) {
+        numberToString();
       } else {
         runtimeError("Operands must be two numbers or two strings.");
         return INTERPRET_RUNTIME_ERROR;

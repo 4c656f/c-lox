@@ -15,7 +15,7 @@
 #include <stdio.h>
 #endif
 
-#define GC_HEAP_GROW_FACTOR 1.2
+#define GC_HEAP_GROW_FACTOR 2
 
 void *reallocate(void *pointer, size_t oldSize, size_t newSize) {
   vm.bytesAllocated += newSize - oldSize;

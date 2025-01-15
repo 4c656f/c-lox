@@ -36,7 +36,6 @@ void printValue(Value value) {
   case VAL_BOOL:
     printf(AS_BOOL(value) ? "true" : "false");
     break;
-    break;
   case VAL_NIL:
     printf("nil");
     break;
