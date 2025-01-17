@@ -20,7 +20,7 @@ Here's what's currently implemented in this interpreter:
 | Functions | ✅ |
 | Closures | ✅ |
 | Standard Library | ✅ |
-| GC | 🚧 |
+| GC | ✅ |
 | Classes | 🚧 |
 | Inheritance | 🚧 |
 | Error Handling | 🚧 |
