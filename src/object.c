@@ -115,7 +115,7 @@ static void printFunction(ObjFunction *function) {
   printf("<fn %s>", function->name->chars);
 }
 
-void printObject(Value value) {
+void printValueObject(Value value) {
   switch (OBJ_TYPE(value)) {
   case OBJ_STRING: {
     printf("%s", AS_CSTRING(value));
@@ -131,6 +131,34 @@ void printObject(Value value) {
   }
   case OBJ_CLOSURE: {
     printFunction(AS_CLOSURE(value)->function);
+    break;
+  }
+  case OBJ_UPVALUE: {
+    printf("upvalue");
+    break;
+  }
+  }
+}
+
+void printObject(Obj *object) {
+  switch (object->type) {
+  case OBJ_STRING: {
+    ObjString *str = (ObjString *)object;
+    printf("%s", str->chars);
+    break;
+  }
+  case OBJ_NATIVE: {
+    printf("<native fn>");
+    break;
+  }
+  case OBJ_FUNCTION: {
+    ObjFunction *fun = (ObjFunction *)object;
+    printFunction(fun);
+    break;
+  }
+  case OBJ_CLOSURE: {
+    ObjClosure *closure = (ObjClosure *)object;
+    printFunction(closure->function);
     break;
   }
   case OBJ_UPVALUE: {

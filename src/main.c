@@ -51,7 +51,7 @@ static char *readFile(const char *path) {
   return fileBuffer;
 }
 
-static void tokenize(const char *path) {
+static void run(const char *path) {
   char *fileContent = readFile(path);
   InterpritationResult result = interpret(fileContent);
   free(fileContent);
@@ -63,13 +63,11 @@ static void tokenize(const char *path) {
 
 int main(int argc, char *argv[]) {
   initVm();
-  if (argc != 3) {
-    fprintf(stderr, "Usage: clox <command> [path]\n");
+  if (argc != 2) {
+    fprintf(stderr, "Usage: clox [path]\n");
     exit(64);
   }
-  if (strcmp(argv[1], "tokenize") == 0) {
-    tokenize(argv[2]);
-  }
+  run(argv[1]);
 
   freeVm();
   return 0;

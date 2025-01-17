@@ -80,6 +80,7 @@ ObjClosure *newClosure(ObjFunction *function);
 ObjUpvalue *newUpvalue(Value *slot);
 ObjNative *newNative(NativeFn function);
 
-void printObject(Value value);
+void printValueObject(Value value);
+void printObject(Obj* object);
 
 #endif

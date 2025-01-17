@@ -40,7 +40,7 @@ void printValue(Value value) {
     printf("nil");
     break;
   case VAL_OBJ:
-    printObject(value);
+    printValueObject(value);
     break;
   }
 }

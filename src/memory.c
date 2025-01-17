@@ -16,7 +16,6 @@
 #endif
 
 #define GC_HEAP_GROW_FACTOR 2
-
 void *reallocate(void *pointer, size_t oldSize, size_t newSize) {
   vm.bytesAllocated += newSize - oldSize;
   if (newSize > oldSize) {
@@ -43,12 +42,14 @@ void *reallocate(void *pointer, size_t oldSize, size_t newSize) {
 
 static void freeObject(Obj *object) {
 #ifdef DEBUG_LOG_GC
-  printf("%p free type %d\n", (void *)object, object->type);
+  printf("%p free type %d ", (void *)object, object->type);
+  printObject(object);
+  printf("\n");
 #endif
   switch (object->type) {
   case OBJ_STRING: {
     ObjString *stringObj = (ObjString *)object;
-    FREE_ARRAY(char *, stringObj->chars, stringObj->length + 1);
+    FREE_ARRAY(char, stringObj->chars, stringObj->length + 1);
     FREE(ObjString, stringObj);
     break;
   }
@@ -83,6 +84,7 @@ void freeObjectPool() {
     cur = next;
   }
   free(vm.grayStack);
+  vm.objectHeap = NULL;
 }
 
 static void sweep() {

@@ -7,6 +7,7 @@
 #include "object.h"
 #include "value.h"
 #include <stdarg.h>
+#include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
@@ -202,7 +203,7 @@ static void numberToString() {
 
 void initVm() {
   vm.bytesAllocated = 0;
-  vm.nextGC = 1024;
+  vm.nextGC = 1024 * 1024;
   vm.objectHeap = NULL;
   vm.grayCap = 0;
   vm.grayCount = 0;
@@ -213,11 +214,22 @@ void initVm() {
 
   defineNative("clock", clockNative);
 }
-
+#ifdef DEBUG_LOG_STATS_GC
+static void printRemainingObjects() {
+  for (Obj *cur = vm.objectHeap; cur != NULL; cur = cur->next) {
+    printf("heap obj: ");
+    printObject(cur);
+    printf("\n");
+  }
+}
+#endif
 void freeVm() {
   freeObjectPool();
   freeHashTable(&vm.stringsPool);
   freeHashTable(&vm.globals);
+#ifdef DEBUG_LOG_STATS_GC
+  printf("-- free vm: %zu\n", vm.bytesAllocated);
+#endif
 }
 
 InterpritationResult static run() {
@@ -459,5 +471,10 @@ InterpritationResult interpret(char *source) {
   call(closure, 0);
 
   InterpritationResult res = run();
+  runGc();
+#ifdef DEBUG_LOG_STATS_GC
+  printRemainingObjects();
+  printf("-- last gc: %zu\n", vm.bytesAllocated);
+#endif
   return res;
 }

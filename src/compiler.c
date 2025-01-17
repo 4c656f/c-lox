@@ -73,7 +73,6 @@ static void initCompiler(Compiler *compiler, FunctionType type) {
 
   compiler->localCount = 0;
   compiler->scopeDepth = 0;
-
   compiler->function = newFunction();
   current = compiler;
 
