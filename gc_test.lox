@@ -1,0 +1,130 @@
+// Test closures and captured variables
+fun makeClosure() {
+  var a = "captured";
+  var b = "also captured";
+  
+  fun inner() {
+    var temp = a + " " + b;
+    return temp;
+  }
+  
+  return inner;
+}
+var closure1 = makeClosure();
+var closure2 = makeClosure();
+print closure1();
+print closure2();
+closure1 = nil; // Should allow GC of first closure
+closure2 = nil; // Should allow GC of first closure
+// Simple GC test for strings and closures
+fun makeStrings() {
+  var counter = 0;
+  for (var i = 0; i < 1000; i = i + 1) {
+    var temp = "string " + i + " more text to make it longer";
+    counter = counter + 1;
+    if (counter > 100) { // Print occasionally
+      print temp;
+      counter = 0;
+    }
+  }
+}
+
+// Test closures and captured variables
+fun makeClosure() {
+  var a = "captured";
+  var b = "also captured";
+  
+  fun inner() {
+    var temp = a + " " + b;
+    return temp;
+  }
+  
+  return inner;
+}
+
+// Test nested functions and multiple closures
+fun makeNestedClosures() {
+  var count = 0;
+  
+  fun increment() {
+    count = count + 1;
+    return count;
+  }
+  
+  fun decrement() {
+    count = count - 1;
+    return count;
+  }
+  
+  return increment;
+}
+
+// Test recursive string creation
+fun recursive(n) {
+  if (n <= 0) return "base";
+  var temp = "level " + n;
+  return recursive(n - 1) + temp;
+}
+
+// Function that creates and returns a new closure each time
+fun makeClosureChain() {
+  var value = "start";
+  
+  fun addLayer() {
+    var previousValue = value;
+    value = previousValue + " layer";
+    return value;
+  }
+  
+  return addLayer;
+}
+
+// Main test sequence
+print "Starting GC test...";
+
+// Create many temporary strings
+makeStrings();
+
+// Test closure creation and garbage collection
+var closure1 = makeClosure();
+var closure2 = makeClosure();
+print closure1();
+print closure2();
+closure1 = nil; // Should allow GC of first closure
+closure2 = nil; // Should allow GC of first closure
+
+// Create more closures
+var counter = makeNestedClosures();
+for (var i = 0; i < 10; i = i + 1) {
+  print counter();
+}
+
+// Create string chain through recursion
+print recursive(30);
+
+// Create more temporary strings
+var printCounter = 0;
+for (var i = 0; i < 500; i = i + 1) {
+  var str = "test" + i + "more text" + i;
+  printCounter = printCounter + 1;
+  if (printCounter > 50) { // Print occasionally
+    print str;
+    printCounter = 0;
+  }
+}
+
+// Test closure chain
+var chainMaker = makeClosureChain();
+for (var i = 0; i < 20; i = i + 1) {
+  print chainMaker();
+}
+
+print "GC test completed.";
+chainMaker = nil;
+makeClosure = nil;
+makeStrings = nil;
+makeNestedClosures = nil;
+recursive = nil;
+makeClosureChain = nil;
+chainMaker = nil;
+counter = nil;

@@ -41,7 +41,6 @@
 *.su
 *.idb
 *.pdb
-*.lox
 
 # Kernel Module Compile Results
 *.mod*

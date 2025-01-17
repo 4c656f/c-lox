@@ -6,6 +6,25 @@ An implementation of the Lox programming language Interpreter written in C. This
 
 Lox is a dynamically-typed scripting language that supports object-oriented programming with classes and inheritance. This implementation follows the bytecode interpreter pattern.
 
+## Running the Interpreter
+
+interpret a Lox script:
+```bash
+./run <filename>.lox
+```
+
+## Example Lox Program 📝
+
+```lox
+// This is a simple Lox program
+fun fib(n) {
+  if (n <= 1) return n;
+  return fib(n - 2) + fib(n - 1);
+}
+
+print fib(10); // Outputs: 55
+```
+
 ## Features ✨
 
 Here's what's currently implemented in this interpreter:
