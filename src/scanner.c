@@ -128,7 +128,7 @@ static Token scanNumber() {
   return newToken(TOKEN_NUMBER);
 }
 
-static TokenType matchKeywoard(int start, int length, const char *rest,
+static TokenType matchKeyword(int start, int length, const char *rest,
                                TokenType type) {
   if (scanner.current - scanner.start == start + length &&
       memcmp(scanner.start + start, rest, length) == 0) {
@@ -140,36 +140,36 @@ static TokenType matchKeywoard(int start, int length, const char *rest,
 static TokenType matchIdentifierType() {
   switch (scanner.start[0]) {
   case 'a':
-    return matchKeywoard(1, 2, "nd", TOKEN_AND);
+    return matchKeyword(1, 2, "nd", TOKEN_AND);
   case 'c':
-    return matchKeywoard(1, 4, "lass", TOKEN_CLASS);
+    return matchKeyword(1, 4, "lass", TOKEN_CLASS);
   case 'e':
-    return matchKeywoard(1, 3, "lse", TOKEN_ELSE);
+    return matchKeyword(1, 3, "lse", TOKEN_ELSE);
   case 'i':
-    return matchKeywoard(1, 1, "f", TOKEN_IF);
+    return matchKeyword(1, 1, "f", TOKEN_IF);
   case 'n':
-    return matchKeywoard(1, 2, "il", TOKEN_NIL);
+    return matchKeyword(1, 2, "il", TOKEN_NIL);
   case 'o':
-    return matchKeywoard(1, 1, "r", TOKEN_OR);
+    return matchKeyword(1, 1, "r", TOKEN_OR);
   case 'p':
-    return matchKeywoard(1, 4, "rint", TOKEN_PRINT);
+    return matchKeyword(1, 4, "rint", TOKEN_PRINT);
   case 'r':
-    return matchKeywoard(1, 5, "eturn", TOKEN_RETURN);
+    return matchKeyword(1, 5, "eturn", TOKEN_RETURN);
   case 's':
-    return matchKeywoard(1, 4, "uper", TOKEN_SUPER);
+    return matchKeyword(1, 4, "uper", TOKEN_SUPER);
   case 'v':
-    return matchKeywoard(1, 2, "ar", TOKEN_VAR);
+    return matchKeyword(1, 2, "ar", TOKEN_VAR);
   case 'w':
-    return matchKeywoard(1, 4, "hile", TOKEN_WHILE);
+    return matchKeyword(1, 4, "hile", TOKEN_WHILE);
   case 'f':
     if (scanner.current - scanner.start > 1) {
       switch (scanner.start[1]) {
       case 'a':
-        return matchKeywoard(2, 3, "lse", TOKEN_FALSE);
+        return matchKeyword(2, 3, "lse", TOKEN_FALSE);
       case 'o':
-        return matchKeywoard(2, 1, "r", TOKEN_FOR);
+        return matchKeyword(2, 1, "r", TOKEN_FOR);
       case 'u':
-        return matchKeywoard(2, 1, "n", TOKEN_FUN);
+        return matchKeyword(2, 1, "n", TOKEN_FUN);
       }
     }
     break;
@@ -177,9 +177,9 @@ static TokenType matchIdentifierType() {
     if (scanner.current - scanner.start > 1) {
       switch (scanner.start[1]) {
       case 'h':
-        return matchKeywoard(2, 2, "is", TOKEN_THIS);
+        return matchKeyword(2, 2, "is", TOKEN_THIS);
       case 'r':
-        return matchKeywoard(2, 2, "ue", TOKEN_TRUE);
+        return matchKeyword(2, 2, "ue", TOKEN_TRUE);
       }
     }
     break;
